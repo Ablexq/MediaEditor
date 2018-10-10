@@ -9,12 +9,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".general.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:launchMode="singleTask"
+            android:name=".photo.PhotoNavActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity
+            android:launchMode="singleTask"
+            android:name=".photo.choose.ChooseMediaActivity"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

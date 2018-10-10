@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--真正用于解析的属性-->
+    <declare-styleable name="sTitleBar">
+        <attr name="s_title" format="string|reference" />
+        <attr name="s_right" format="string|reference" />
+    </declare-styleable>
+    <!-- 圆形 end -->
+
+
+</resources>
