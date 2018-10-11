@@ -1,8 +1,10 @@
 package com.sunquan.mediaeditor.photo.choose;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +12,13 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.sunquan.mediaeditor.R;
+import com.sunquan.mediaeditor.component.ME;
 import com.sunquan.mediaeditor.model.MediaInfo;
 import com.sunquan.mediaeditor.utils.FrescoUtil;
 import com.sunquan.mediaeditor.utils.MathUtil;
 import com.sunquan.mediaeditor.utils.ViewUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,12 +29,31 @@ import java.util.List;
 public class MediaChooseAdapter extends RecyclerView.Adapter {
     private Context context;
     private int mItemSize;
-    private List<MediaInfo> items;
+    private List<MediaInfo> items = new ArrayList<>();
 
 
     public MediaChooseAdapter(Context context) {
         this.context = context;
         this.mItemSize = (ViewUtil.getScreenWidth(context) - (ChooseMediaActivity.GRID_COLUMS - 1) * ViewUtil.dp2px(context, 1)) / ChooseMediaActivity.GRID_COLUMS;
+        ME.media(context).setOnMediaChangeListener(mediaInfo -> {
+            if (!isExist(mediaInfo)) {
+                ((Activity) context).runOnUiThread(() -> {
+                    items.add(mediaInfo);
+                    notifyItemInserted(items.size() - 1);
+                });
+            }
+        });
+    }
+
+    private boolean isExist(MediaInfo mediaInfo) {
+        for (int i = 0; i < items.size(); i++) {
+            if (!TextUtils.isEmpty(mediaInfo.filePath)
+                    && !TextUtils.isEmpty(items.get(i).filePath)
+                    && mediaInfo.filePath.equals(items.get(i).filePath)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @NonNull
@@ -52,7 +75,7 @@ public class MediaChooseAdapter extends RecyclerView.Adapter {
     }
 
     public void loadData() {
-
+        ME.media(context).loadImageMedias("");
     }
 
     private class MediaVH extends RecyclerView.ViewHolder {
@@ -72,8 +95,8 @@ public class MediaChooseAdapter extends RecyclerView.Adapter {
             if (item == null) {
                 return;
             }
-            FrescoUtil.loadImageLocalUrl(image, item.thumbnailPath);
-            FrescoUtil.loadImageLocalUrl(image, item.filePath);
+            FrescoUtil.loadImage(image, item.thumbnailPath);
+            FrescoUtil.loadImage(image, item.filePath);
             if (item.type == MediaInfo.TYPE_VIDEO) {
                 bindForVideo(item);
             } else {

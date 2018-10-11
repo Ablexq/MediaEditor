@@ -20,6 +20,7 @@ public class MediaInfo implements Serializable {
     public int type;
     public int mediaHeight;
     public int mediaWidth;
+    public String dir;
 
     public MediaInfo(String filePath, String mimeType, long duration, int type, int mediaHeight, int mediaWidth) {
         this.filePath = filePath;

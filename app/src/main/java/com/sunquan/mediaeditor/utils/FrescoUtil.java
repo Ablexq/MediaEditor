@@ -13,7 +13,7 @@ import java.io.File;
 
 public class FrescoUtil {
 
-    public static void loadImageLocalUrl(SimpleDraweeView simpleDraweeView, String url) {
+    public static void loadImage(SimpleDraweeView simpleDraweeView, String url) {
         if (TextUtils.isEmpty(url)) {
             return;
         }

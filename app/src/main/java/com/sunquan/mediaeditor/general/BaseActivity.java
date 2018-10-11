@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.sunquan.mediaeditor.utils.StatusBarUtil;
 
+import butterknife.ButterKnife;
+
 /**
  * @author sunquan
  * sunquan@bitstarlight.com
@@ -19,6 +21,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
+        ButterKnife.bind(this);
         initView();
         bindAction();
     }

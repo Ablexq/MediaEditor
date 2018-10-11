@@ -20,9 +20,9 @@ import butterknife.BindView;
 public class ChooseMediaActivity extends BaseActivity {
     public static final int GRID_COLUMS = 3;
     @BindView(R.id.titlebar)
-    private TitleBar titleBar;
+    TitleBar titleBar;
     @BindView(R.id.recycleView)
-    private RecyclerView recyclerView;
+    RecyclerView recyclerView;
     private MediaChooseAdapter adapter;
     private int mediaType;
 
