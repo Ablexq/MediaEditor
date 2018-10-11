@@ -34,7 +34,7 @@ public class ChooseMediaActivity extends BaseActivity {
         recyclerView.addItemDecoration(new MediaChooseItemDecoration(ChooseMediaActivity.GRID_COLUMS, ViewUtil.dp2px(this, 1), false));
         recyclerView.setAdapter(adapter);
         ((SimpleItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
-        adapter.loadData();
+        adapter.loadData("");
     }
 
     @Override

@@ -7,7 +7,7 @@ import java.io.Serializable;
  * sunquan@bitstarlight.com
  * @date 2018/10/10
  **/
-public class MediaInfo implements Serializable {
+public class MediaItem implements Serializable {
     public static final int TYPE_VIDEO = 0;
     public static final int TYPE_PHOTO = 1;
     public String filePath;
@@ -22,7 +22,7 @@ public class MediaInfo implements Serializable {
     public int mediaWidth;
     public String dir;
 
-    public MediaInfo(String filePath, String mimeType, long duration, int type, int mediaHeight, int mediaWidth) {
+    public MediaItem(String filePath, String mimeType, long duration, int type, int mediaHeight, int mediaWidth) {
         this.filePath = filePath;
         this.mimeType = mimeType;
         this.duration = duration;
@@ -31,14 +31,14 @@ public class MediaInfo implements Serializable {
         this.mediaWidth = mediaWidth;
     }
 
-    public MediaInfo() {
+    public MediaItem() {
 
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof MediaInfo) {
-            MediaInfo info = (MediaInfo) o;
+        if (o instanceof MediaItem) {
+            MediaItem info = (MediaItem) o;
             return id == info.id;
         }
         return false;

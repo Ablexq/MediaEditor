@@ -9,7 +9,7 @@ import android.media.ExifInterface;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 
-import com.sunquan.mediaeditor.model.MediaInfo;
+import com.sunquan.mediaeditor.model.MediaItem;
 import com.sunquan.mediaeditor.utils.Constants;
 
 import java.io.File;
@@ -28,18 +28,23 @@ public final class MediaChooseComponent {
     private volatile static MediaChooseComponent mediaChooseComponent = null;
     private final ContentResolver mediaResolver;
     private OnMediaChangeListener listener;
+    private OnMediaDirChangeListener dirListener;
     private Thread imageQueryThread;
-    private List<MediaInfo> imageMediasCache = new ArrayList<>();
-    private List<MediaInfo> videoMediasCache = new ArrayList<>();
+    private List<MediaItem> imageMediasCache = new ArrayList<>();
+    private List<MediaItem> videoMediasCache = new ArrayList<>();
 
     private Set<String> imageDirs = new HashSet<>();
-    private HashMap<String, List<MediaInfo>> dirMapImage = new HashMap<>();
+    private HashMap<String, List<MediaItem>> dirMapImage = new HashMap<>();
 
     private List<String> videoDirs = new ArrayList<>();
-    private HashMap<String, List<MediaInfo>> dirMapVideos = new HashMap<>();
+    private HashMap<String, List<MediaItem>> dirMapVideos = new HashMap<>();
 
     public void setOnMediaChangeListener(OnMediaChangeListener listener) {
         this.listener = listener;
+    }
+
+    public void setOnMediaDirChangeListener(OnMediaDirChangeListener dirListener) {
+        this.dirListener = dirListener;
     }
 
     private MediaChooseComponent(Context context) {
@@ -47,7 +52,11 @@ public final class MediaChooseComponent {
     }
 
     public void loadImageMedias(String dir) {
-        ArrayList<MediaInfo> medias = new ArrayList<>();
+        if (imageQueryThread != null && imageQueryThread.isAlive()) {
+            imageQueryThread.interrupt();
+            imageQueryThread = null;
+        }
+        ArrayList<MediaItem> medias = new ArrayList<>();
         if (TextUtils.isEmpty(dir)) {
             medias.addAll(imageMediasCache);
         } else {
@@ -56,14 +65,10 @@ public final class MediaChooseComponent {
             }
         }
 
-        for (MediaInfo mediaInfo : medias) {
+        for (MediaItem mediaInfo : medias) {
             if (listener != null) {
                 listener.notifyMedia(mediaInfo);
             }
-        }
-        if (imageQueryThread != null && imageQueryThread.isAlive()) {
-            imageQueryThread.interrupt();
-            imageQueryThread = null;
         }
         imageQueryThread = new Thread(() -> {
             queryImageList(dir);
@@ -97,23 +102,27 @@ public final class MediaChooseComponent {
                 if (TextUtils.isEmpty(filePath)) {
                     continue;
                 }
+                final String mediaDir = getMediaDir(filePath);
+                imageDirs.add(mediaDir);
+                if (dirListener != null) {
+                    dirListener.notifyMediaDir(mediaDir);
+                }
                 if (!TextUtils.isEmpty(dir) && !isMatch(getMediaDir(filePath), dir)) {
                     continue;
                 }
 
-                MediaInfo imageInfo = generateImageInfo(imageCursor, col_mine_type_image, col_data_image, col_title_image, col_id_image, col_date_added_image);
+                MediaItem imageInfo = newMediaItem(imageCursor, col_mine_type_image, col_data_image, col_title_image, col_id_image, col_date_added_image);
                 if (imageInfo == null || isExistInImageCache(imageInfo, imageMediasCache)) {
                     continue;
                 }
 
                 imageMediasCache.add(imageInfo);
-                imageDirs.add(imageInfo.dir);
                 if (dirMapImage.get(imageInfo.dir) == null) {
-                    List<MediaInfo> medias = new ArrayList<>();
+                    List<MediaItem> medias = new ArrayList<>();
                     medias.add(imageInfo);
                     dirMapImage.put(imageInfo.dir, medias);
                 } else {
-                    final List<MediaInfo> mediaInfos = dirMapImage.get(imageInfo.dir);
+                    final List<MediaItem> mediaInfos = dirMapImage.get(imageInfo.dir);
                     if (!isExistInImageCache(imageInfo, mediaInfos)) {
                         mediaInfos.add(imageInfo);
                     }
@@ -142,14 +151,14 @@ public final class MediaChooseComponent {
         return mediaDir.equals(dir);
     }
 
-    private MediaInfo generateImageInfo(Cursor cursor, int col_mine_type, int col_data, int col_title, int col_id, int col_date_added) {
+    private MediaItem newMediaItem(Cursor cursor, int col_mine_type, int col_data, int col_title, int col_id, int col_date_added) {
 
         String mimeType = cursor.getString(col_mine_type);
         String filePath = cursor.getString(col_data);
         if (!new File(filePath).exists()) {
             return null;
         }
-        MediaInfo mediaInfo = new MediaInfo();
+        MediaItem mediaInfo = new MediaItem();
         mediaInfo.type = Constants.MediaType.MEDIA_PHOTO;
         String title = cursor.getString(col_title);
         mediaInfo.filePath = filePath;
@@ -199,7 +208,7 @@ public final class MediaChooseComponent {
         }
     }
 
-    private Cursor createThumbnailAndRequery(MediaInfo info) {
+    private Cursor createThumbnailAndRequery(MediaItem info) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inDither = false;
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
@@ -215,7 +224,7 @@ public final class MediaChooseComponent {
         return thumbCursor;
     }
 
-    public boolean isExistInImageCache(MediaInfo mediaInfo, List<MediaInfo> mediaInfos) {
+    public boolean isExistInImageCache(MediaItem mediaInfo, List<MediaItem> mediaInfos) {
         for (int i = 0; i < mediaInfos.size(); i++) {
             if (!TextUtils.isEmpty(mediaInfo.filePath)
                     && !TextUtils.isEmpty(mediaInfos.get(i).filePath)
@@ -237,7 +246,15 @@ public final class MediaChooseComponent {
         return mediaChooseComponent;
     }
 
+    public Set<String> getDirs() {
+        return imageDirs;
+    }
+
+    public interface OnMediaDirChangeListener {
+        void notifyMediaDir(String dir);
+    }
+
     public interface OnMediaChangeListener {
-        void notifyMedia(MediaInfo mediaInfo);
+        void notifyMedia(MediaItem mediaInfo);
     }
 }

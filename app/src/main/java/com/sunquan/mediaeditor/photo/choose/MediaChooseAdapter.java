@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.sunquan.mediaeditor.R;
 import com.sunquan.mediaeditor.component.ME;
-import com.sunquan.mediaeditor.model.MediaInfo;
+import com.sunquan.mediaeditor.model.MediaItem;
 import com.sunquan.mediaeditor.utils.FrescoUtil;
 import com.sunquan.mediaeditor.utils.MathUtil;
 import com.sunquan.mediaeditor.utils.ViewUtil;
@@ -29,7 +29,7 @@ import java.util.List;
 public class MediaChooseAdapter extends RecyclerView.Adapter {
     private Context context;
     private int mItemSize;
-    private List<MediaInfo> items = new ArrayList<>();
+    private List<MediaItem> items = new ArrayList<>();
 
 
     public MediaChooseAdapter(Context context) {
@@ -45,7 +45,7 @@ public class MediaChooseAdapter extends RecyclerView.Adapter {
         });
     }
 
-    private boolean isExist(MediaInfo mediaInfo) {
+    private boolean isExist(MediaItem mediaInfo) {
         for (int i = 0; i < items.size(); i++) {
             if (!TextUtils.isEmpty(mediaInfo.filePath)
                     && !TextUtils.isEmpty(items.get(i).filePath)
@@ -74,8 +74,10 @@ public class MediaChooseAdapter extends RecyclerView.Adapter {
         return items.size();
     }
 
-    public void loadData() {
-        ME.media(context).loadImageMedias("");
+    public void loadData(String dir) {
+        items.clear();
+        notifyDataSetChanged();
+        ME.media(context).loadImageMedias(dir);
     }
 
     private class MediaVH extends RecyclerView.ViewHolder {
@@ -90,14 +92,14 @@ public class MediaChooseAdapter extends RecyclerView.Adapter {
             videoDuration = itemView.findViewById(R.id.duration);
         }
 
-        public void bind(MediaInfo item, int position, MediaVH holder) {
+        public void bind(MediaItem item, int position, MediaVH holder) {
             resizeView(rootView);
             if (item == null) {
                 return;
             }
             FrescoUtil.loadImage(image, item.thumbnailPath);
             FrescoUtil.loadImage(image, item.filePath);
-            if (item.type == MediaInfo.TYPE_VIDEO) {
+            if (item.type == MediaItem.TYPE_VIDEO) {
                 bindForVideo(item);
             } else {
                 bindForImage(item);
@@ -116,11 +118,11 @@ public class MediaChooseAdapter extends RecyclerView.Adapter {
 
         }
 
-        private void bindForImage(MediaInfo item) {
+        private void bindForImage(MediaItem item) {
             videoDuration.setVisibility(View.GONE);
         }
 
-        private void bindForVideo(MediaInfo item) {
+        private void bindForVideo(MediaItem item) {
             videoDuration.setVisibility(View.VISIBLE);
             MathUtil.getVideoDur(videoDuration, item.duration);
         }
