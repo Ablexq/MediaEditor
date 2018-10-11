@@ -19,6 +19,8 @@ public class PhotoNavActivity extends BaseActivity{
     TextView chooseMedia;
     @BindView(R.id.choose_photo_with_dir)
     TextView chooseMediaWithDir;
+    @BindView(R.id.surfaceview)
+    TextView surfaceView;
 
     @Override
     public void initView() {
@@ -34,5 +36,6 @@ public class PhotoNavActivity extends BaseActivity{
     public void bindAction() {
         chooseMedia.setOnClickListener(v-> NavUtil.gotoChooseMediaActivity(this, Constants.MediaType.MEDIA_PHOTO));
         chooseMediaWithDir.setOnClickListener(v-> NavUtil.gotoChooseMediaWithDirActivity(this, Constants.MediaType.MEDIA_PHOTO));
+        surfaceView.setOnClickListener(v-> NavUtil.gotoSurfaceViewActivity(this));
     }
 }

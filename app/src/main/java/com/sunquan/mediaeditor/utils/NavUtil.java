@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.sunquan.mediaeditor.photo.PhotoNavActivity;
+import com.sunquan.mediaeditor.photo.SurfaceViewActivity;
 import com.sunquan.mediaeditor.photo.choose.ChooseMediaActivity;
 import com.sunquan.mediaeditor.photo.choose.ChooseMediaWithDirActivity;
 
@@ -35,6 +36,11 @@ public class NavUtil {
     public static void gotoChooseMediaWithDirActivity(Context context, int mediaType) {
         Intent i = new Intent(context, ChooseMediaWithDirActivity.class);
         i.putExtra(Constants.Key.MEDIA_TYPE,mediaType);
+        context.startActivity(i);
+    }
+
+    public static void gotoSurfaceViewActivity(Context context) {
+        Intent i = new Intent(context, SurfaceViewActivity.class);
         context.startActivity(i);
     }
 }
