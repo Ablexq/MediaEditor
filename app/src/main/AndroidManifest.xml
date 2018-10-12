@@ -33,6 +33,11 @@
             android:screenOrientation="portrait"></activity>
 
         <activity
+            android:name=".audio.AudioNavActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"></activity>
+
+        <activity
             android:name=".photo.choose.ChooseMediaActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"></activity>
@@ -43,6 +48,11 @@
             android:screenOrientation="portrait"></activity>
         <activity
             android:name=".photo.SurfaceViewActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"></activity>
+
+        <activity
+            android:name=".audio.record.AudioRecordActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"></activity>
 
