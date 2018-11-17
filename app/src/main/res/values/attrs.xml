@@ -2,7 +2,7 @@
 <resources>
 
     <!--真正用于解析的属性-->
-    <declare-styleable name="sTitleBar">
+    <declare-styleable name="TitleBar">
         <attr name="s_title" format="string|reference" />
         <attr name="s_right" format="string|reference" />
     </declare-styleable>

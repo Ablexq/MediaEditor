@@ -44,9 +44,9 @@ public class TitleBar extends LinearLayout {
     }
 
     private void getAttrs(Context context, AttributeSet attrs) {
-        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.sTitleBar);
-        titleStr = ta.getString(R.styleable.sTitleBar_s_title);
-        right = ta.getString(R.styleable.sTitleBar_s_right);
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.TitleBar);
+        titleStr = ta.getString(R.styleable.TitleBar_s_title);
+        right = ta.getString(R.styleable.TitleBar_s_right);
         initView();
         bindAction();
     }
